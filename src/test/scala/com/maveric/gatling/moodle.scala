@@ -13,6 +13,7 @@ class moodle extends Simulation {
 		.inferHtmlResources()
 		.acceptEncodingHeader("gzip, deflate")
 		.userAgentHeader("Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
+  	.silentResources
 
 	val headers_0 = Map(
 		"Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
@@ -115,7 +116,7 @@ class moodle extends Simulation {
 
 	val scn = scenario("moodle")
 		// Home
-		.exec(http("request_0")
+		.exec(http("Home_Page")
 			.get("/")
 			.headers(headers_0)
 			.resources(http("request_1")
@@ -141,8 +142,10 @@ class moodle extends Simulation {
 			.headers(headers_7)
 			.body(RawFileBody("com/maveric/gatling/moodle/0007_request.json"))))
 		.pause(19)
+
+
 		// Open Login
-		.exec(http("request_8")
+		.exec(http("Open_Login_Page")
 			.get("/login/index.php")
 			.headers(headers_0)
 			.resources(http("request_9")
@@ -150,8 +153,10 @@ class moodle extends Simulation {
 			.headers(headers_7)
 			.body(RawFileBody("com/maveric/gatling/moodle/0009_request.json"))))
 		.pause(21)
+
+
 		// Login
-		.exec(http("request_10")
+		.exec(http("Login")
 			.post("/login/index.php")
 			.headers(headers_10)
 			.formParam("anchor", "")
@@ -212,8 +217,11 @@ class moodle extends Simulation {
 			.get("/theme/image.php/boost/block_myoverview/1574938282/courses")
 			.headers(headers_1)))
 		.pause(13)
+
+
+
 		// Site Adminis
-		.exec(http("request_27")
+		.exec(http("Click_on_Site_Administration")
 			.get("/admin/search.php")
 			.headers(headers_0)
 			.resources(http("request_28")
@@ -224,8 +232,11 @@ class moodle extends Simulation {
 			.headers(headers_7)
 			.body(RawFileBody("com/maveric/gatling/moodle/0029_request.json"))))
 		.pause(18)
+
+
+
 		// Click on add course
-		.exec(http("request_30")
+		.exec(http("Click_On_Add_Course")
 			.get("/course/edit.php?category=0")
 			.headers(headers_0)
 			.resources(http("request_31")
@@ -334,8 +345,10 @@ class moodle extends Simulation {
 			.get("/theme/image.php/boost/theme/1574938282/fp/dnd_arrow")
 			.headers(headers_1)))
 		.pause(23)
+
+
 		// Submit Data
-		.exec(http("request_62")
+		.exec(http("Submit_Course_Data")
 			.post(uri1 + "?cup2key=9:3645185050&cup2hreq=95ef513c59e3839f53d1497fe1c3838387b8efdf8385f37bc0daffc24311db92")
 			.headers(headers_62)
 			.body(RawFileBody("com/maveric/gatling/moodle/0062_request.json")))
@@ -371,7 +384,7 @@ class moodle extends Simulation {
 			.headers(headers_70)
 			.body(RawFileBody("com/maveric/gatling/moodle/0070_request.json")))
 		.pause(4)
-		.exec(http("request_71")
+		.exec(http("Submit_Course_Data")
 			.post("/lib/editor/atto/autosave-ajax.php")
 			.headers(headers_47)
 			.formParam("actions[0][action]", "reset")
@@ -458,8 +471,10 @@ class moodle extends Simulation {
 			.get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22savechanges%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22cancel%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
 			.headers(headers_11)))
 		.pause(26)
+
+
 		// Click Proceed to course content
-		.exec(http("request_78")
+		.exec(http("Click_On_Proceed_To_Course_Content")
 			.get("/course/view.php?id=4")
 			.headers(headers_0)
 			.resources(http("request_79")
@@ -470,8 +485,11 @@ class moodle extends Simulation {
 			.headers(headers_7)
 			.body(RawFileBody("com/maveric/gatling/moodle/0080_request.json"))))
 		.pause(14)
+
+
+
 		// Logout
-		.exec(http("request_81")
+		.exec(http("Logout")
 			.get("/login/logout.php?sesskey=jAJFCT7m4r")
 			.headers(headers_0)
 			.resources(http("request_82")
@@ -480,4 +498,5 @@ class moodle extends Simulation {
 			.body(RawFileBody("com/maveric/gatling/moodle/0082_request.json"))))
 
 	setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
+		.disablePauses
 }
