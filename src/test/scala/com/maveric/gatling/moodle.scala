@@ -15,6 +15,7 @@ class moodle extends Simulation {
 		.acceptEncodingHeader("gzip, deflate")
 		.userAgentHeader("Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
   	.silentResources
+		.strict302Handling
 		.proxy(Proxy("127.0.0.1",8888))
 
 	val headers_0 = Map(
@@ -115,12 +116,16 @@ class moodle extends Simulation {
     val uri1 = "http://update.googleapis.com/service/update2/json"
     val uri3 = "http://redirector.gvt1.com/edgedl/release2"
     val uri4 = "http://r4---sn-cvh7knez.gvt1.com/edgedl/release2/InoL8xikh4kmHhn0dVdN-Q_26/AKazB3LBoCjHJWZWENiKn6c"
+		val csv_UserData = csv ("userdata.csv").queue
+
+	val r = new scala.util.Random
 
 	val scn = scenario("moodle")
 		// Home
 		.exec(http("Home_Page")
 			.get("/")
 			.headers(headers_0)
+  			.check(regex("Available courses").exists)
 			.resources(http("request_1")
 			.get("/theme/image.php/boost/core/1574938282/i/course")
 			.headers(headers_1),
@@ -142,7 +147,8 @@ class moodle extends Simulation {
             http("request_7")
 			.post("/lib/ajax/service.php?sesskey=rRfuFN94AY&info=core_fetch_notifications")
 			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0007_request.json"))))
+			.body(StringBody("""{"index":0,"methodname":"core_fetch_notifications","args":{"contextid":2222}}"""))))
+
 		.pause(19)
 
 
@@ -150,39 +156,28 @@ class moodle extends Simulation {
 		.exec(http("Open_Login_Page")
 			.get("/login/index.php")
 			.headers(headers_0)
-			.resources(http("request_9")
-			.post("/lib/ajax/service.php?sesskey=rRfuFN94AY&info=core_fetch_notifications")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0009_request.json"))))
+  			.check(regex("input type=\"hidden\" name=\"logintoken\" value=\"(.+?)\"").saveAs("LoginToken"))
+			  .check(regex("Remember username").exists)
+			)
 		.pause(21)
 
 
 		// Login
+		.feed(csv_UserData)
 		.exec(http("Login")
 			.post("/login/index.php")
 			.headers(headers_10)
 			.formParam("anchor", "")
-			.formParam("logintoken", "3n7UFnDs3wpwWcwoBHvRQdgXLRReaKEJ")
-			.formParam("username", "mohan")
-			.formParam("password", "MOhan@11")
+			.formParam("logintoken", "${LoginToken}")
+			.formParam("username", "${username}")
+			.formParam("password", "${password}")
+			.check(regex("This page should automatically redirect|Recently accessed courses").exists)
 			.resources(http("request_11")
 			.get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22ariaeventlistpaginationnavdates%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22block_timeline%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
 			.headers(headers_11),
-            http("request_12")
-			.post("/lib/ajax/service.php?sesskey=jAJFCT7m4r&info=core_calendar_get_calendar_monthly_view")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0012_request.json")),
-            http("request_13")
-			.post("/lib/ajax/service.php?sesskey=jAJFCT7m4r&info=core_course_get_recent_courses")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0013_request.json")),
-            http("request_14")
+				 http("request_14")
 			.get("/lib/ajax/service-nologin.php?info=core_output_load_fontawesome_icon_map&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_fontawesome_icon_map%22%2C%22args%22%3A%5B%5D%7D%5D")
 			.headers(headers_11),
-            http("request_15")
-			.post("/lib/ajax/service.php?sesskey=jAJFCT7m4r&info=core_fetch_notifications")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0015_request.json")),
             http("request_16")
 			.get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22ariaeventlistpagelimit%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22block_timeline%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
 			.headers(headers_11),
@@ -204,15 +199,7 @@ class moodle extends Simulation {
             http("request_22")
 			.get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringparams%22%3A%5B%5D%2C%22lang%22%3A%22en%22%7D%7D%5D")
 			.headers(headers_11),
-            http("request_23")
-			.post("/lib/ajax/service.php?sesskey=jAJFCT7m4r&info=core_course_get_enrolled_courses_by_timeline_classification")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0023_request.json")),
-            http("request_24")
-			.post("/lib/ajax/service.php?sesskey=jAJFCT7m4r&info=core_calendar_get_action_events_by_timesort")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0024_request.json")),
-            http("request_25")
+           http("request_25")
 			.get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core_course%22%2C%22template%22%3A%22no-courses%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
 			.headers(headers_11),
             http("request_26")
@@ -226,13 +213,10 @@ class moodle extends Simulation {
 		.exec(http("Click_on_Site_Administration")
 			.get("/admin/search.php")
 			.headers(headers_0)
+			.check(regex("Site administration").exists)
 			.resources(http("request_28")
 			.get("/theme/yui_combo.php?m/1574938282/core/formchangechecker/formchangechecker-min.js")
-			.headers(headers_2),
-            http("request_29")
-			.post("/lib/ajax/service.php?sesskey=jAJFCT7m4r&info=core_fetch_notifications")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0029_request.json"))))
+			.headers(headers_2)))
 		.pause(18)
 
 
@@ -241,6 +225,8 @@ class moodle extends Simulation {
 		.exec(http("Click_On_Add_Course")
 			.get("/course/edit.php?category=0")
 			.headers(headers_0)
+  			.check(regex("\"sesskey\":\"(.+?)\"").saveAs("sesskey"))
+			.check(regex("Add a new course").exists)
 			.resources(http("request_31")
 			.get("/theme/image.php/boost/core/1574938282/t/collapsed")
 			.headers(headers_1),
@@ -256,10 +242,6 @@ class moodle extends Simulation {
             http("request_35")
 			.get("/theme/yui_combo.php?3.17.2/cssgrids/cssgrids-min.css&3.17.2/calendar-base/assets/skins/sam/calendar-base.css&3.17.2/calendarnavigator/assets/skins/sam/calendarnavigator.css&3.17.2/calendar/assets/skins/sam/calendar.css")
 			.headers(headers_35),
-            http("request_36")
-			.post("/lib/ajax/service.php?sesskey=jAJFCT7m4r&info=core_fetch_notifications")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0036_request.json")),
             http("request_37")
 			.get("/theme/yui_combo.php?3.17.2/intl/intl-min.js&3.17.2/calendar-base/lang/calendar-base_en.js&3.17.2/datatype-date-parse/datatype-date-parse-min.js&3.17.2/datatype-date-format/lang/datatype-date-format_en-US.js&3.17.2/datatype-date-format/datatype-date-format-min.js&3.17.2/datatype-date-math/datatype-date-math-min.js&3.17.2/calendar-base/calendar-base-min.js&3.17.2/plugin/plugin-min.js&3.17.2/calendarnavigator/calendarnavigator-min.js&3.17.2/calendar/calendar-min.js&m/1574938282/form/dateselector/dateselector-min.js")
 			.headers(headers_2),
@@ -290,20 +272,7 @@ class moodle extends Simulation {
             http("request_46")
 			.get("/theme/image.php/boost/core/1574938282/i/warning")
 			.headers(headers_1),
-            http("request_47")
-			.post("/lib/editor/atto/autosave-ajax.php")
-			.headers(headers_47)
-			.formParam("actions[0][contextid]", "3")
-			.formParam("actions[0][action]", "resume")
-			.formParam("actions[0][draftid]", "763635804")
-			.formParam("actions[0][elementid]", "id_summary_editor")
-			.formParam("actions[0][pageinstance]", "yui_3_17_2_1_1575441295142_290")
-			.formParam("actions[0][pagehash]", "ec8fc89fc09e06957278a594f688505604edcadf")
-			.formParam("sesskey", "jAJFCT7m4r"),
-            http("request_48")
-			.get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core%22%2C%22template%22%3A%22pix_icon_fontawesome%22%2C%22themename%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-			.headers(headers_11),
-            http("request_49")
+           http("request_49")
 			.get("/theme/image.php/boost/atto_h5p/1574938282/icon")
 			.headers(headers_1),
             http("request_50")
@@ -333,16 +302,6 @@ class moodle extends Simulation {
             http("request_58")
 			.get("/lib/javascript.php/1574938282/lib/form/form.js")
 			.headers(headers_2),
-            http("request_59")
-			.post("/repository/draftfiles_ajax.php?action=list")
-			.headers(headers_47)
-			.formParam("sesskey", "jAJFCT7m4r")
-			.formParam("client_id", "5de7538ec5b6c")
-			.formParam("filepath", "/")
-			.formParam("itemid", "285991687"),
-            http("request_60")
-			.get("/theme/image.php/boost/theme/1574938282/fp/path_folder")
-			.headers(headers_1),
             http("request_61")
 			.get("/theme/image.php/boost/theme/1574938282/fp/dnd_arrow")
 			.headers(headers_1)))
@@ -350,43 +309,7 @@ class moodle extends Simulation {
 
 
 		// Submit Data
-		.exec(http("Submit_Course_Data")
-			.post(uri1 + "?cup2key=9:3645185050&cup2hreq=95ef513c59e3839f53d1497fe1c3838387b8efdf8385f37bc0daffc24311db92")
-			.headers(headers_62)
-			.body(RawFileBody("com/maveric/gatling/moodle/0062_request.json")))
-		.pause(1)
-		.exec(http("request_63")
-			.head(uri3 + "/chrome_component/AN_9AzJXQZzYTbhwfBE0Bas_5551/By-AX1T1bFXYHS17mQ3lww")
-			.headers(headers_63))
-		.pause(4)
-		.exec(http("request_64")
-			.get(uri3 + "/chrome_component/AN_9AzJXQZzYTbhwfBE0Bas_5551/By-AX1T1bFXYHS17mQ3lww")
-			.headers(headers_64))
-		.pause(3)
-		.exec(http("request_65")
-			.get(uri3 + "/chrome_component/AN_9AzJXQZzYTbhwfBE0Bas_5551/By-AX1T1bFXYHS17mQ3lww")
-			.headers(headers_65))
-		.pause(2)
-		.exec(http("request_66")
-			.get(uri3 + "/chrome_component/AN_9AzJXQZzYTbhwfBE0Bas_5551/By-AX1T1bFXYHS17mQ3lww")
-			.headers(headers_66))
-		.pause(1)
-		.exec(http("request_67")
-			.head(uri3 + "/InoL8xikh4kmHhn0dVdN-Q_26/AKazB3LBoCjHJWZWENiKn6c")
-			.headers(headers_63)
-			.resources(http("request_68")
-			.head(uri4 + "?mip=49.249.248.170&mvi=3&pl=24&shardbypass=yes&redirect_counter=1&rm=sn-h55ee7e&req_id=fc61ab8c23f47a49&cms_redirect=yes&ipbypass=yes&mm=28&mn=sn-cvh7knez&ms=nvh&mt=1575440848&mv=u")
-			.headers(headers_63),
-            http("request_69")
-			.get(uri3 + "/InoL8xikh4kmHhn0dVdN-Q_26/AKazB3LBoCjHJWZWENiKn6c")
-			.headers(headers_63)))
-		.pause(1)
-		.exec(http("request_70")
-			.post(uri1)
-			.headers(headers_70)
-			.body(RawFileBody("com/maveric/gatling/moodle/0070_request.json")))
-		.pause(4)
-		.exec(http("Submit_Course_Data")
+		.exec(http("autosave")
 			.post("/lib/editor/atto/autosave-ajax.php")
 			.headers(headers_47)
 			.formParam("actions[0][action]", "reset")
@@ -394,16 +317,18 @@ class moodle extends Simulation {
 			.formParam("actions[0][elementid]", "id_summary_editor")
 			.formParam("actions[0][pageinstance]", "yui_3_17_2_1_1575441295142_290")
 			.formParam("actions[0][pagehash]", "ec8fc89fc09e06957278a594f688505604edcadf")
-			.formParam("sesskey", "jAJFCT7m4r")
-			.resources(http("request_72")
+			.formParam("sesskey", "${sesskey}")
+			.silent
+			.resources(http("Submit_Course_Data")
 			.post("/course/edit.php")
 			.headers(headers_10)
+			.notSilent
 			.formParam("returnto", "0")
 			.formParam("returnurl", "http://13.233.133.114/course/")
 			.formParam("mform_isexpanded_id_descriptionhdr", "1")
 			.formParam("addcourseformatoptionshere", "")
 			.formParam("id", "")
-			.formParam("sesskey", "jAJFCT7m4r")
+			.formParam("sesskey", "${sesskey}")
 			.formParam("_qf__course_edit_form", "1")
 			.formParam("mform_isexpanded_id_general", "1")
 			.formParam("mform_isexpanded_id_courseformathdr", "0")
@@ -413,8 +338,8 @@ class moodle extends Simulation {
 			.formParam("mform_isexpanded_id_groups", "0")
 			.formParam("mform_isexpanded_id_rolerenaming", "0")
 			.formParam("mform_isexpanded_id_tagshdr", "0")
-			.formParam("fullname", "Course_Full_Name")
-			.formParam("shortname", "Course_Short_Name")
+			.formParam("fullname", session => "Course_" + r.nextInt(1000).toString)
+			.formParam("shortname",  session => "Short Name" + r.nextInt(1000).toString)
 			.formParam("category", "1")
 			.formParam("visible", "1")
 			.formParam("startdate[day]", "5")
@@ -455,18 +380,16 @@ class moodle extends Simulation {
 			.formParam("role_7", "")
 			.formParam("role_8", "")
 			.formParam("tags", "_qf__force_multiselect_submission")
-			.formParam("saveanddisplay", "Save and display"),
+			.formParam("saveanddisplay", "Save and display")
+  				.check(regex("id=(.+?)&").saveAs("CourseID"))
+			.check(regex("This page should automatically redirect|Number of participants: 0").exists),
             http("request_73")
 			.get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22enroluserscohorts%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22enrol_manual%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22enrolusers%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22enrol_manual%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
 			.headers(headers_11),
             http("request_74")
 			.get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22userfilterplaceholder%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22moodle%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22nofiltersapplied%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22moodle%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
 			.headers(headers_11),
-            http("request_75")
-			.post("/lib/ajax/service.php?sesskey=jAJFCT7m4r&info=core_fetch_notifications")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0075_request.json")),
-            http("request_76")
+           http("request_76")
 			.get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core%22%2C%22template%22%3A%22modal_save_cancel%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
 			.headers(headers_11),
             http("request_77")
@@ -477,27 +400,18 @@ class moodle extends Simulation {
 
 		// Click Proceed to course content
 		.exec(http("Click_On_Proceed_To_Course_Content")
-			.get("/course/view.php?id=4")
+			.get("/course/view.php?id=${CourseID}")
 			.headers(headers_0)
+			.check(regex("Topic outline").exists)
 			.resources(http("request_79")
 			.get("/lib/javascript.php/1574938282/course/completion.js")
-			.headers(headers_2),
-            http("request_80")
-			.post("/lib/ajax/service.php?sesskey=jAJFCT7m4r&info=core_fetch_notifications")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0080_request.json"))))
-		.pause(14)
-
+			.headers(headers_2)))
 
 
 		// Logout
 		.exec(http("Logout")
-			.get("/login/logout.php?sesskey=jAJFCT7m4r")
-			.headers(headers_0)
-			.resources(http("request_82")
-			.post("/lib/ajax/service.php?sesskey=ND8XGuV0Hi&info=core_fetch_notifications")
-			.headers(headers_7)
-			.body(RawFileBody("com/maveric/gatling/moodle/0082_request.json"))))
+			.get("/login/logout.php?sesskey=${sesskey}")
+			.headers(headers_0))
 
 	setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
 		.disablePauses
