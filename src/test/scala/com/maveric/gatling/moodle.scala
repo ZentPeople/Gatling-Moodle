@@ -7,13 +7,15 @@ import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
 class moodle extends Simulation {
-
+	
+	val environemtURL = "http://13.233.133.114"
 	val httpProtocol = http
-		.baseUrl("http://13.233.133.114")
+		.baseUrl(environemtURL)
 		.inferHtmlResources()
 		.acceptEncodingHeader("gzip, deflate")
 		.userAgentHeader("Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
   	.silentResources
+		.proxy(Proxy("127.0.0.1",8888))
 
 	val headers_0 = Map(
 		"Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
@@ -34,21 +36,21 @@ class moodle extends Simulation {
 	val headers_3 = Map(
 		"Accept" -> "*/*",
 		"Accept-Language" -> "en-US,en;q=0.9",
-		"Origin" -> "http://13.233.133.114",
+		"Origin" -> environemtURL,
 		"Proxy-Connection" -> "keep-alive")
 
 	val headers_7 = Map(
 		"Accept" -> "application/json, text/javascript, */*; q=0.01",
 		"Accept-Language" -> "en-US,en;q=0.9",
 		"Content-Type" -> "application/json",
-		"Origin" -> "http://13.233.133.114",
+		"Origin" -> environemtURL,
 		"Proxy-Connection" -> "keep-alive",
 		"X-Requested-With" -> "XMLHttpRequest")
 
 	val headers_10 = Map(
 		"Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
 		"Accept-Language" -> "en-US,en;q=0.9",
-		"Origin" -> "http://13.233.133.114",
+		"Origin" -> environemtURL,
 		"Proxy-Connection" -> "keep-alive",
 		"Upgrade-Insecure-Requests" -> "1")
 
@@ -68,7 +70,7 @@ class moodle extends Simulation {
 		"Accept" -> "*/*",
 		"Accept-Language" -> "en-US,en;q=0.9",
 		"Content-Type" -> "application/x-www-form-urlencoded; charset=UTF-8",
-		"Origin" -> "http://13.233.133.114",
+		"Origin" -> environemtURL,
 		"Proxy-Connection" -> "keep-alive",
 		"X-Requested-With" -> "XMLHttpRequest")
 

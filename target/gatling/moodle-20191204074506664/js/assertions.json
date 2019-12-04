@@ -1,0 +1,10 @@
+{
+  "simulation": "com.maveric.gatling.moodle",
+  "simulationId": "moodle",
+  "start": 1575445506664,
+  "description": "",
+  "scenarios": ["moodle"],
+  "assertions": [
+
+  ]
+}

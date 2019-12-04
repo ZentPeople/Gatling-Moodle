@@ -1,0 +1,45 @@
+RUN	com.maveric.gatling.moodle	moodle	1575445899494	 	3.3.1
+USER	moodle	1	START	1575445901469	1575445901469
+REQUEST	1		Home_Page	1575445901608	1575445902054	OK	 
+ERROR	request_7: Failed to build request: Resource com/maveric/gatling/moodle/0007_request.json not found 	1575445902267
+REQUEST	1		Open_Login_Page	1575445902840	1575445903069	OK	 
+ERROR	request_9: Failed to build request: Resource com/maveric/gatling/moodle/0009_request.json not found 	1575445903113
+REQUEST	1		Login	1575445903124	1575445903251	OK	 
+REQUEST	1		Login Redirect 1	1575445903258	1575445903463	OK	 
+ERROR	request_12: Failed to build request: Resource com/maveric/gatling/moodle/0012_request.json not found 	1575445903473
+ERROR	request_13: Failed to build request: Resource com/maveric/gatling/moodle/0013_request.json not found 	1575445903473
+ERROR	request_15: Failed to build request: Resource com/maveric/gatling/moodle/0015_request.json not found 	1575445903474
+ERROR	request_23: Failed to build request: Resource com/maveric/gatling/moodle/0023_request.json not found 	1575445903477
+ERROR	request_24: Failed to build request: Resource com/maveric/gatling/moodle/0024_request.json not found 	1575445903478
+REQUEST	1		Click_on_Site_Administration	1575445904467	1575445904589	OK	 
+REQUEST	1		Click_on_Site_Administration Redirect 1	1575445904590	1575445904802	OK	 
+ERROR	request_29: Failed to build request: Resource com/maveric/gatling/moodle/0029_request.json not found 	1575445904811
+REQUEST	1		Click_On_Add_Course	1575445904847	1575445904984	OK	 
+REQUEST	1		Click_On_Add_Course Redirect 1	1575445904985	1575445905219	OK	 
+ERROR	request_36: Failed to build request: Resource com/maveric/gatling/moodle/0036_request.json not found 	1575445905228
+ERROR	Submit_Course_Data: Failed to build request: Resource com/maveric/gatling/moodle/0062_request.json not found 	1575445905942
+REQUEST	1		request_63	1575445905952	1575445906220	OK	 
+REQUEST	1		request_63 Redirect 1	1575445906221	1575445906755	OK	 
+REQUEST	1		request_63 Redirect 2	1575445906756	1575445906977	OK	 
+REQUEST	1		request_64	1575445906978	1575445907096	OK	 
+REQUEST	1		request_64 Redirect 1	1575445907097	1575445907205	OK	 
+REQUEST	1		request_64 Redirect 2	1575445907206	1575445907244	OK	 
+REQUEST	1		request_65	1575445907245	1575445907362	OK	 
+REQUEST	1		request_65 Redirect 1	1575445907362	1575445907473	OK	 
+REQUEST	1		request_65 Redirect 2	1575445907474	1575445907514	OK	 
+REQUEST	1		request_66	1575445907515	1575445907627	OK	 
+REQUEST	1		request_66 Redirect 1	1575445907628	1575445907741	OK	 
+REQUEST	1		request_66 Redirect 2	1575445907741	1575445907777	OK	 
+REQUEST	1		request_67	1575445907778	1575445907892	OK	 
+REQUEST	1		request_67 Redirect 1	1575445907893	1575445908311	OK	 
+REQUEST	1		request_67 Redirect 2	1575445908312	1575445908756	OK	 
+ERROR	request_70: Failed to build request: Resource com/maveric/gatling/moodle/0070_request.json not found 	1575445909012
+REQUEST	1		Submit_Course_Data	1575445909013	1575445909133	OK	 
+ERROR	request_75: Failed to build request: Resource com/maveric/gatling/moodle/0075_request.json not found 	1575445909136
+REQUEST	1		Click_On_Proceed_To_Course_Content	1575445909892	1575445910032	OK	 
+REQUEST	1		Click_On_Proceed_To_Course_Content Redirect 1	1575445910033	1575445910265	OK	 
+ERROR	request_80: Failed to build request: Resource com/maveric/gatling/moodle/0080_request.json not found 	1575445910274
+REQUEST	1		Logout	1575445910315	1575445910426	OK	 
+REQUEST	1		Logout Redirect 1	1575445910427	1575445910688	OK	 
+ERROR	request_82: Failed to build request: Resource com/maveric/gatling/moodle/0082_request.json not found 	1575445910695
+USER	moodle	1	END	1575445901469	1575445910714
