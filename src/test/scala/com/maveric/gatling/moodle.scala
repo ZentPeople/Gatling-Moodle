@@ -22,23 +22,19 @@ class moodle extends Simulation {
     "Accept-Language" -> "en-US,en;q=0.9",
     "Proxy-Connection" -> "keep-alive",
     "Upgrade-Insecure-Requests" -> "1")
-
   val headers_1 = Map(
     "Accept" -> "image/webp,image/apng,image/*,*/*;q=0.8",
     "Accept-Language" -> "en-US,en;q=0.9",
     "Proxy-Connection" -> "keep-alive")
-
   val headers_2 = Map(
     "Accept" -> "*/*",
     "Accept-Language" -> "en-US,en;q=0.9",
     "Proxy-Connection" -> "keep-alive")
-
   val headers_3 = Map(
     "Accept" -> "*/*",
     "Accept-Language" -> "en-US,en;q=0.9",
     "Origin" -> environemtURL,
     "Proxy-Connection" -> "keep-alive")
-
   val headers_7 = Map(
     "Accept" -> "application/json, text/javascript, */*; q=0.01",
     "Accept-Language" -> "en-US,en;q=0.9",
@@ -46,26 +42,22 @@ class moodle extends Simulation {
     "Origin" -> environemtURL,
     "Proxy-Connection" -> "keep-alive",
     "X-Requested-With" -> "XMLHttpRequest")
-
   val headers_10 = Map(
     "Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
     "Accept-Language" -> "en-US,en;q=0.9",
     "Origin" -> environemtURL,
     "Proxy-Connection" -> "keep-alive",
     "Upgrade-Insecure-Requests" -> "1")
-
   val headers_11 = Map(
     "Accept" -> "application/json, text/javascript, */*; q=0.01",
     "Accept-Language" -> "en-US,en;q=0.9",
     "Content-Type" -> "application/json",
     "Proxy-Connection" -> "keep-alive",
     "X-Requested-With" -> "XMLHttpRequest")
-
   val headers_35 = Map(
     "Accept" -> "text/css,*/*;q=0.1",
     "Accept-Language" -> "en-US,en;q=0.9",
     "Proxy-Connection" -> "keep-alive")
-
   val headers_47 = Map(
     "Accept" -> "*/*",
     "Accept-Language" -> "en-US,en;q=0.9",
@@ -73,41 +65,35 @@ class moodle extends Simulation {
     "Origin" -> environemtURL,
     "Proxy-Connection" -> "keep-alive",
     "X-Requested-With" -> "XMLHttpRequest")
-
   val headers_62 = Map(
     "Content-Type" -> "application/json",
     "Proxy-Connection" -> "keep-alive",
     "X-Goog-Update-AppId" -> "ihnlcenocehgdaegdmhbidjhnhdchfmm,llkgjffcdpffmhiakmfcdcblohccpfmo,giekcmmlnklenlaomppkphknjmnnpneh,khaoiebndkojlmppeemjhbpbandiljpe,aemomkdncapdnfajjbbcbdebjljbpmpj,gcmjkmgdlgnkkcocmoeiminaijmmjnii,ehgidpndbllacpjalkiimkbadgjfnnmc,hfnkpimlhhgieaddgfemjhofmfblmnib,gkmgaooipdjhmangpemjhigmamcehddo,mimojjlkmoijpicakmndhoigimigcmbb,oimompecagnajdejgnnjijobebaeigek,jflookgnkcckhobaglndicnbbgbonegd,hnimpnehoodheedghdeeijklkeaacbdc,copjbmjbojbakpaedmpkhmiplmmehfck",
     "X-Goog-Update-Interactivity" -> "bg",
     "X-Goog-Update-Updater" -> "chrome-78.0.3904.108")
-
   val headers_63 = Map(
     "Accept" -> "*/*",
     "Accept-Encoding" -> "identity",
     "Proxy-Connection" -> "Keep-Alive",
     "User-Agent" -> "Microsoft BITS/7.7")
-
   val headers_64 = Map(
     "Accept" -> "*/*",
     "Accept-Encoding" -> "identity",
     "Proxy-Connection" -> "Keep-Alive",
     "Range" -> "bytes=0-5690",
     "User-Agent" -> "Microsoft BITS/7.7")
-
   val headers_65 = Map(
     "Accept" -> "*/*",
     "Accept-Encoding" -> "identity",
     "Proxy-Connection" -> "Keep-Alive",
     "Range" -> "bytes=5691-13739",
     "User-Agent" -> "Microsoft BITS/7.7")
-
   val headers_66 = Map(
     "Accept" -> "*/*",
     "Accept-Encoding" -> "identity",
     "Proxy-Connection" -> "Keep-Alive",
     "Range" -> "bytes=13740-20461",
     "User-Agent" -> "Microsoft BITS/7.7")
-
   val headers_70 = Map(
     "Content-Type" -> "application/json",
     "Proxy-Connection" -> "keep-alive")
@@ -115,18 +101,14 @@ class moodle extends Simulation {
     "Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
     "Proxy-Connection" -> "keep-alive",
     "Upgrade-Insecure-Requests" -> "1")
-
   val Custromheader_2 = Map(
     "Accept" -> "*/*",
     "Proxy-Connection" -> "keep-alive")
-
-
   val Custromheader_10 = Map(
     "Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
     "Origin" -> "http://52.66.244.207",
     "Proxy-Connection" -> "keep-alive",
     "Upgrade-Insecure-Requests" -> "1")
-
   val Custromheader_31 = Map(
     "Accept" -> "text/css,*/*;q=0.1",
     "Proxy-Connection" -> "keep-alive")
@@ -244,7 +226,6 @@ class moodle extends Simulation {
       }
       .pause(5)
   }
-
   object CreateCourse {
     val createCourse = repeat(1){
       group("01_Click_On_Add_Course") {
@@ -430,7 +411,6 @@ class moodle extends Simulation {
 
       // Click Proceed to course content
       .group("01_Click On proceed to course content") {
-
         exec(http("Click_On_Proceed_To_Course_Content")
           .get("/course/view.php?id=${CourseID}")
           .headers(headers_0)
@@ -511,8 +491,8 @@ class moodle extends Simulation {
   val deleteContent = scenario("DeleteContent").exec(Login.login,DeleteCourse.deleteCourse,Logout.logout)
 
   setUp(
-    createContent.inject(rampUsers(1) during(1)).disablePauses,
-    deleteContent.inject(rampUsers(1) during(1)).disablePauses
+    createContent.inject(rampUsers(10) during(100)),
+    deleteContent.inject(rampUsers(10) during(100))
   ).protocols(httpProtocol)
 
 }
