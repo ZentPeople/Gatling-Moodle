@@ -111,6 +111,25 @@ class moodle extends Simulation {
   val headers_70 = Map(
     "Content-Type" -> "application/json",
     "Proxy-Connection" -> "keep-alive")
+  val Custromheader_0 = Map(
+    "Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
+    "Proxy-Connection" -> "keep-alive",
+    "Upgrade-Insecure-Requests" -> "1")
+
+  val Custromheader_2 = Map(
+    "Accept" -> "*/*",
+    "Proxy-Connection" -> "keep-alive")
+
+
+  val Custromheader_10 = Map(
+    "Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
+    "Origin" -> "http://52.66.244.207",
+    "Proxy-Connection" -> "keep-alive",
+    "Upgrade-Insecure-Requests" -> "1")
+
+  val Custromheader_31 = Map(
+    "Accept" -> "text/css,*/*;q=0.1",
+    "Proxy-Connection" -> "keep-alive")
 
   val uri1 = "http://update.googleapis.com/service/update2/json"
   val uri3 = "http://redirector.gvt1.com/edgedl/release2"
@@ -228,7 +247,7 @@ class moodle extends Simulation {
 
   object CreateCourse {
     val createCourse = repeat(1){
-      group("Click_On_Add_Course") {
+      group("01_Click_On_Add_Course") {
 
       exec(http("01_Click_On_Add_Course")
         .get("/course/edit.php?category=0")
@@ -423,6 +442,63 @@ class moodle extends Simulation {
       }
   }
   }
+  object DeleteCourse {
+  val deleteCourse = repeat(1){
+    group("02_Click on manage Cources") {
+      exec(http("Manage Cources")
+        .get("/course/management.php")
+        .headers(Custromheader_0)
+        .check(regex("\"sesskey\":\"(.+?)\"").saveAs("sesskey"))
+        .check(regex("delete\\.php\\?id=(.+?)\"").findRandom.saveAs("CourseNumber"))
+        .check(regex("Course and category management").exists)
+        .resources(http("request_31")
+          .get("/theme/yui_combo.php?3.17.2/cssbutton/cssbutton-min.css")
+          .headers(Custromheader_31),
+          http("request_32")
+            .get("/theme/yui_combo.php?m/1574938282/core/widget/widget-focusafterclose-min.js&3.17.2/plugin/plugin-min.js&m/1574938282/core/lockscroll/lockscroll-min.js&m/1574938282/core/notification/notification-dialogue-min.js&m/1574938282/core/notification/notification-exception-min.js&3.17.2/dd-constrain/dd-constrain-min.js&3.17.2/dd-proxy/dd-proxy-min.js&3.17.2/event-resize/event-resize-min.js&3.17.2/dd-ddm/dd-ddm-min.js&3.17.2/dd-ddm-drop/dd-ddm-drop-min.js&3.17.2/dd-drop/dd-drop-min.js&3.17.2/dd-drop-plugin/dd-drop-plugin-min.js&3.17.2/dd-delegate/dd-delegate-min.js&m/1574938282/course/management/management-min.js")
+            .headers(Custromheader_2),
+          http("request_33")
+            .get("/theme/yui_combo.php?3.17.2/event-mousewheel/event-mousewheel-min.js&3.17.2/event-hover/event-hover-min.js&3.17.2/event-touch/event-touch-min.js&3.17.2/event-move/event-move-min.js&3.17.2/event-flick/event-flick-min.js&3.17.2/event-valuechange/event-valuechange-min.js&3.17.2/event-tap/event-tap-min.js")
+            .headers(Custromheader_2)))
+    }
+      .pause(5)
+
+
+      // Delete a course
+      .group("02_Click on delete Button") {
+
+        exec(http("request_35")
+          .get("/course/delete.php?id=${CourseNumber}")
+          .headers(Custromheader_0)
+          .check(regex("Are you absolutely sure you want to completely delete this course and all the data it contains?").exists)
+          .check(regex("\" name=\"delete\" value=\"(.+?)\"").saveAs("DeleteID"))
+        )
+      }
+      .pause(5)
+
+
+      // Confirm delete
+      .group("02_Confirm Delete") {
+        exec(http("Confirm Delete")
+          .post("/course/delete.php")
+          .headers(Custromheader_10)
+          .formParam("id", "${CourseNumber}")
+          .formParam("delete", "${DeleteID}")
+          .formParam("sesskey", "${sesskey}")
+          .check(regex("has been completely deleted").exists)
+        )
+      }
+      .pause(5)
+      // Click Continue
+      .group("02_Click Continue") {
+        exec(http("request_39")
+          .get("/course/management.php?categoryid=1")
+          .headers(Custromheader_0)
+          .check(regex("Course and category management").exists)
+        )
+      }
+      .pause(5)
+  }}
   object Logout{
     var logout = group("Logout") {
 

@@ -2,11 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fafec410-a59b-433e-a1a8-e9d8dc78d5cb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/gatling.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/gatling.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/scala/com/maveric/gatling/DeleteCourse.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/scala/com/maveric/gatling/DeleteCourse.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/scala/com/maveric/gatling/DeleteCourse.scala" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/scala/com/maveric/gatling/moodle.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/scala/com/maveric/gatling/moodle.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/maveric/gatling/moodle.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/maveric/gatling/moodle.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/maveric/gatling/DeleteCourse$.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/maveric/gatling/DeleteCourse.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/maveric/gatling/moodle$CreateCourse$.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/maveric/gatling/moodle$Login$.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/maveric/gatling/moodle$Logout$.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/maveric/gatling/moodle.class" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
