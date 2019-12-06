@@ -1,21 +1,21 @@
 package com.maveric.gatling
 
 import scala.concurrent.duration._
-
+import com.maveric.gatling._
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
 class moodle extends Simulation {
 
-  val environemtURL = "http://35.154.63.115"
+  val environemtURL = "http://52.66.244.207"
   val httpProtocol = http
     .baseUrl(environemtURL)
     .inferHtmlResources()
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
     .silentResources
-//    .proxy(Proxy("127.0.0.1", 8888))
+    .proxy(Proxy("127.0.0.1", 8888))
 
   val headers_0 = Map(
     "Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
@@ -119,9 +119,8 @@ class moodle extends Simulation {
 
   val r = new scala.util.Random
 
-  val scn = scenario("moodle")
-    // Home
-    .group("Homepage") {
+  object Login {
+    var login =  group("Homepage") {
       exec(http("Home_Page")
         .get("/")
         .headers(headers_0)
@@ -149,87 +148,89 @@ class moodle extends Simulation {
             .headers(headers_7)
             .body(StringBody("""{"index":0,"methodname":"core_fetch_notifications","args":{"contextid":2222}}"""))))
     }
-    .pause(5)
+      .pause(5)
 
 
-    // Open Login
-    .exec(http("Open_Login_Page")
-      .get("/login/index.php")
-      .headers(headers_0)
-      .check(regex("input type=\"hidden\" name=\"logintoken\" value=\"(.+?)\"").saveAs("LoginToken"))
-      .check(regex("Remember username").exists)
-    )
+      // Open Login
+      .group("Open Login Page") {
+        exec(http("Open_Login_Page")
+          .get("/login/index.php")
+          .headers(headers_0)
+          .check(regex("input type=\"hidden\" name=\"logintoken\" value=\"(.+?)\"").saveAs("LoginToken"))
+          .check(regex("Remember username").exists)
+        )
+      }
 
-    .pause(5)
+      .pause(5)
 
-    // Login
-    .group("Login") {
-      feed(csv_UserData)
-        .exec(http("Login")
-          .post("/login/index.php")
-          .headers(headers_10)
-          .formParam("anchor", "")
-          .formParam("logintoken", "${LoginToken}")
-          .formParam("username", "${username}")
-          .formParam("password", "${password}")
+      // Login
+      .group("Login") {
+        feed(csv_UserData)
+          .exec(http("Login")
+            .post("/login/index.php")
+            .headers(headers_10)
+            .formParam("anchor", "")
+            .formParam("logintoken", "${LoginToken}")
+            .formParam("username", "${username}")
+            .formParam("password", "${password}")
 
-          .check(regex("This page should automatically redirect|Recently accessed courses").exists)
-          .resources(http("request_11")
-            .get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22ariaeventlistpaginationnavdates%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22block_timeline%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-            .headers(headers_11),
-            http("request_14")
-              .get("/lib/ajax/service-nologin.php?info=core_output_load_fontawesome_icon_map&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_fontawesome_icon_map%22%2C%22args%22%3A%5B%5D%7D%5D")
+            .check(regex("This page should automatically redirect|Recently accessed courses").exists)
+            .resources(http("request_11")
+              .get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22ariaeventlistpaginationnavdates%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22block_timeline%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
               .headers(headers_11),
-            http("request_16")
-              .get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22ariaeventlistpagelimit%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22block_timeline%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-              .headers(headers_11),
-            http("request_17")
-              .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22calendar%22%2C%22template%22%3A%22modal_event_form%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-              .headers(headers_11),
-            http("request_18")
-              .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies,core_output_load_template_with_dependencies,core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22tool_usertours%22%2C%22template%22%3A%22resettour%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core%22%2C%22template%22%3A%22paged_content%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A2%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core_calendar%22%2C%22template%22%3A%22month_mini%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-              .headers(headers_11),
-            http("request_19")
-              .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core%22%2C%22template%22%3A%22pix_icon_fontawesome%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-              .headers(headers_11),
-            http("request_20")
-              .get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22save%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22loading%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A2%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22closebuttontitle%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-              .headers(headers_11),
-            http("request_21")
-              .get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22show%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-              .headers(headers_11),
-            http("request_22")
-              .get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringparams%22%3A%5B%5D%2C%22lang%22%3A%22en%22%7D%7D%5D")
-              .headers(headers_11),
-            http("request_25")
-              .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core_course%22%2C%22template%22%3A%22no-courses%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-              .headers(headers_11),
-            http("request_26")
-              .get("/theme/image.php/boost/block_myoverview/1574938282/courses")
-              .headers(headers_1)))
-    }
-    .pause(5)
+              http("request_14")
+                .get("/lib/ajax/service-nologin.php?info=core_output_load_fontawesome_icon_map&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_fontawesome_icon_map%22%2C%22args%22%3A%5B%5D%7D%5D")
+                .headers(headers_11),
+              http("request_16")
+                .get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22ariaeventlistpagelimit%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22block_timeline%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+                .headers(headers_11),
+              http("request_17")
+                .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22calendar%22%2C%22template%22%3A%22modal_event_form%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+                .headers(headers_11),
+              http("request_18")
+                .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies,core_output_load_template_with_dependencies,core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22tool_usertours%22%2C%22template%22%3A%22resettour%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core%22%2C%22template%22%3A%22paged_content%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A2%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core_calendar%22%2C%22template%22%3A%22month_mini%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+                .headers(headers_11),
+              http("request_19")
+                .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core%22%2C%22template%22%3A%22pix_icon_fontawesome%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+                .headers(headers_11),
+              http("request_20")
+                .get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22save%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22loading%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A2%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22closebuttontitle%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+                .headers(headers_11),
+              http("request_21")
+                .get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22show%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+                .headers(headers_11),
+              http("request_22")
+                .get("/lib/ajax/service-nologin.php?info=core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringparams%22%3A%5B%5D%2C%22lang%22%3A%22en%22%7D%7D%5D")
+                .headers(headers_11),
+              http("request_25")
+                .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core_course%22%2C%22template%22%3A%22no-courses%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+                .headers(headers_11),
+              http("request_26")
+                .get("/theme/image.php/boost/block_myoverview/1574938282/courses")
+                .headers(headers_1)))
+      }
+      .pause(5)
 
 
 
-    // Site Adminis
-    .group("Click on site Administraton") {
-      exec(http("Click_on_Site_Administration")
-        .get("/admin/search.php")
-        .headers(headers_0)
-        .check(regex("Site administration").exists)
-        .resources(http("request_28")
-          .get("/theme/yui_combo.php?m/1574938282/core/formchangechecker/formchangechecker-min.js")
-          .headers(headers_2)))
-    }
-    .pause(5)
+      // Site Adminis
+      .group("Click on site Administraton") {
+        exec(http("Click_on_Site_Administration")
+          .get("/admin/search.php")
+          .headers(headers_0)
+          .check(regex("Site administration").exists)
+          .resources(http("request_28")
+            .get("/theme/yui_combo.php?m/1574938282/core/formchangechecker/formchangechecker-min.js")
+            .headers(headers_2)))
+      }
+      .pause(5)
+  }
 
+  object CreateCourse {
+    val createCourse = repeat(1){
+      group("Click_On_Add_Course") {
 
-
-    // Click on add course
-    .group("Click_On_Add_Course") {
-
-      exec(http("Click_On_Add_Course")
+      exec(http("01_Click_On_Add_Course")
         .get("/course/edit.php?category=0")
         .headers(headers_0)
         .check(regex("\"sesskey\":\"(.+?)\"").saveAs("sesskey"))
@@ -313,123 +314,129 @@ class moodle extends Simulation {
             .get("/theme/image.php/boost/theme/1574938282/fp/dnd_arrow")
             .headers(headers_1)))
     }
-    .pause(5)
+      .pause(5)
 
 
-    // Submit Data
-    .group("Subit Data") {
-      exec(http("autosave")
-        .post("/lib/editor/atto/autosave-ajax.php")
-        .headers(headers_47)
-        .formParam("actions[0][action]", "reset")
-        .formParam("actions[0][contextid]", "3")
-        .formParam("actions[0][elementid]", "id_summary_editor")
-        .formParam("actions[0][pageinstance]", "yui_3_17_2_1_1575441295142_290")
-        .formParam("actions[0][pagehash]", "ec8fc89fc09e06957278a594f688505604edcadf")
-        .formParam("sesskey", "${sesskey}")
-        .silent
-        .resources(http("Submit_Course_Data")
-          .post("/course/edit.php")
-          .headers(headers_10)
-          .notSilent
-          .formParam("returnto", "0")
-          .formParam("returnurl", "http://35.154.63.115/course/")
-          .formParam("mform_isexpanded_id_descriptionhdr", "1")
-          .formParam("addcourseformatoptionshere", "")
-          .formParam("id", "")
+      // Submit Data
+      .group("01_Subit Data") {
+        exec(http("autosave")
+          .post("/lib/editor/atto/autosave-ajax.php")
+          .headers(headers_47)
+          .formParam("actions[0][action]", "reset")
+          .formParam("actions[0][contextid]", "3")
+          .formParam("actions[0][elementid]", "id_summary_editor")
+          .formParam("actions[0][pageinstance]", "yui_3_17_2_1_1575441295142_290")
+          .formParam("actions[0][pagehash]", "ec8fc89fc09e06957278a594f688505604edcadf")
           .formParam("sesskey", "${sesskey}")
-          .formParam("_qf__course_edit_form", "1")
-          .formParam("mform_isexpanded_id_general", "1")
-          .formParam("mform_isexpanded_id_courseformathdr", "0")
-          .formParam("mform_isexpanded_id_appearancehdr", "0")
-          .formParam("mform_isexpanded_id_filehdr", "0")
-          .formParam("mform_isexpanded_id_completionhdr", "0")
-          .formParam("mform_isexpanded_id_groups", "0")
-          .formParam("mform_isexpanded_id_rolerenaming", "0")
-          .formParam("mform_isexpanded_id_tagshdr", "0")
-          .formParam("fullname", session => "Course_" + r.nextInt(1000).toString)
-          .formParam("shortname", session => "Short Name" + r.nextInt(1000).toString)
-          .formParam("category", "1")
-          .formParam("visible", "1")
-          .formParam("startdate[day]", "5")
-          .formParam("startdate[month]", "12")
-          .formParam("startdate[year]", "2019")
-          .formParam("startdate[hour]", "0")
-          .formParam("startdate[minute]", "0")
-          .formParam("enddate[day]", "4")
-          .formParam("enddate[month]", "12")
-          .formParam("enddate[year]", "2020")
-          .formParam("enddate[hour]", "0")
-          .formParam("enddate[minute]", "0")
-          .formParam("enddate[enabled]", "1")
-          .formParam("idnumber", "")
-          .formParam("summary_editor[text]", "<p>Description</p>")
-          .formParam("summary_editor[format]", "1")
-          .formParam("summary_editor[itemid]", "763635804")
-          .formParam("overviewfiles_filemanager", "285991687")
-          .formParam("format", "topics")
-          .formParam("numsections", "4")
-          .formParam("hiddensections", "0")
-          .formParam("coursedisplay", "0")
-          .formParam("lang", "")
-          .formParam("newsitems", "5")
-          .formParam("showgrades", "1")
-          .formParam("showreports", "0")
-          .formParam("maxbytes", "0")
-          .formParam("enablecompletion", "1")
-          .formParam("groupmode", "0")
-          .formParam("groupmodeforce", "0")
-          .formParam("defaultgroupingid", "0")
-          .formParam("role_1", "")
-          .formParam("role_2", "")
-          .formParam("role_3", "")
-          .formParam("role_4", "")
-          .formParam("role_5", "")
-          .formParam("role_6", "")
-          .formParam("role_7", "")
-          .formParam("role_8", "")
-          .formParam("tags", "_qf__force_multiselect_submission")
-          .formParam("saveanddisplay", "Save and display")
-          .check(regex("id=(.+?)&").saveAs("CourseID"))
-          .check(regex("This page should automatically redirect|Number of participants: 0").exists),
-          http("request_73")
-            .get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22enroluserscohorts%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22enrol_manual%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22enrolusers%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22enrol_manual%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-            .headers(headers_11),
-          http("request_74")
-            .get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22userfilterplaceholder%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22moodle%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22nofiltersapplied%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22moodle%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-            .headers(headers_11),
-          http("request_76")
-            .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core%22%2C%22template%22%3A%22modal_save_cancel%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-            .headers(headers_11),
-          http("request_77")
-            .get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22savechanges%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22cancel%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
-            .headers(headers_11)))
-    }
-    .pause(5)
+          .silent
+          .resources(http("Submit_Course_Data")
+            .post("/course/edit.php")
+            .headers(headers_10)
+            .notSilent
+            .formParam("returnto", "0")
+            .formParam("returnurl", "http://52.66.244.207/course/")
+            .formParam("mform_isexpanded_id_descriptionhdr", "1")
+            .formParam("addcourseformatoptionshere", "")
+            .formParam("id", "")
+            .formParam("sesskey", "${sesskey}")
+            .formParam("_qf__course_edit_form", "1")
+            .formParam("mform_isexpanded_id_general", "1")
+            .formParam("mform_isexpanded_id_courseformathdr", "0")
+            .formParam("mform_isexpanded_id_appearancehdr", "0")
+            .formParam("mform_isexpanded_id_filehdr", "0")
+            .formParam("mform_isexpanded_id_completionhdr", "0")
+            .formParam("mform_isexpanded_id_groups", "0")
+            .formParam("mform_isexpanded_id_rolerenaming", "0")
+            .formParam("mform_isexpanded_id_tagshdr", "0")
+            .formParam("fullname", session => "Course_" + r.nextInt(1000).toString)
+            .formParam("shortname", session => "Short Name" + r.nextInt(1000).toString)
+            .formParam("category", "1")
+            .formParam("visible", "1")
+            .formParam("startdate[day]", "5")
+            .formParam("startdate[month]", "12")
+            .formParam("startdate[year]", "2019")
+            .formParam("startdate[hour]", "0")
+            .formParam("startdate[minute]", "0")
+            .formParam("enddate[day]", "4")
+            .formParam("enddate[month]", "12")
+            .formParam("enddate[year]", "2020")
+            .formParam("enddate[hour]", "0")
+            .formParam("enddate[minute]", "0")
+            .formParam("enddate[enabled]", "1")
+            .formParam("idnumber", "")
+            .formParam("summary_editor[text]", "<p>Description</p>")
+            .formParam("summary_editor[format]", "1")
+            .formParam("summary_editor[itemid]", "763635804")
+            .formParam("overviewfiles_filemanager", "285991687")
+            .formParam("format", "topics")
+            .formParam("numsections", "4")
+            .formParam("hiddensections", "0")
+            .formParam("coursedisplay", "0")
+            .formParam("lang", "")
+            .formParam("newsitems", "5")
+            .formParam("showgrades", "1")
+            .formParam("showreports", "0")
+            .formParam("maxbytes", "0")
+            .formParam("enablecompletion", "1")
+            .formParam("groupmode", "0")
+            .formParam("groupmodeforce", "0")
+            .formParam("defaultgroupingid", "0")
+            .formParam("role_1", "")
+            .formParam("role_2", "")
+            .formParam("role_3", "")
+            .formParam("role_4", "")
+            .formParam("role_5", "")
+            .formParam("role_6", "")
+            .formParam("role_7", "")
+            .formParam("role_8", "")
+            .formParam("tags", "_qf__force_multiselect_submission")
+            .formParam("saveanddisplay", "Save and display")
+            .check(regex("id=(.+?)&").saveAs("CourseID"))
+            .check(regex("This page should automatically redirect|Number of participants: 0").exists),
+            http("request_73")
+              .get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22enroluserscohorts%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22enrol_manual%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22enrolusers%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22enrol_manual%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+              .headers(headers_11),
+            http("request_74")
+              .get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22userfilterplaceholder%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22moodle%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22nofiltersapplied%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22moodle%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+              .headers(headers_11),
+            http("request_76")
+              .get("/lib/ajax/service-nologin.php?info=core_output_load_template_with_dependencies&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_output_load_template_with_dependencies%22%2C%22args%22%3A%7B%22component%22%3A%22core%22%2C%22template%22%3A%22modal_save_cancel%22%2C%22themename%22%3A%22boost%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+              .headers(headers_11),
+            http("request_77")
+              .get("/lib/ajax/service-nologin.php?info=core_get_string,core_get_string&cachekey=1574938282&args=%5B%7B%22index%22%3A0%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22savechanges%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%2C%7B%22index%22%3A1%2C%22methodname%22%3A%22core_get_string%22%2C%22args%22%3A%7B%22stringid%22%3A%22cancel%22%2C%22stringparams%22%3A%5B%5D%2C%22component%22%3A%22%22%2C%22lang%22%3A%22en%22%7D%7D%5D")
+              .headers(headers_11)))
+      }
+      .pause(5)
 
 
-    // Click Proceed to course content
-    .group("Click On proceed to course content") {
+      // Click Proceed to course content
+      .group("01_Click On proceed to course content") {
 
-      exec(http("Click_On_Proceed_To_Course_Content")
-        .get("/course/view.php?id=${CourseID}")
-        .headers(headers_0)
-        .check(regex("Topic outline").exists)
-        .resources(http("request_79")
-          .get("/lib/javascript.php/1574938282/course/completion.js")
-          .headers(headers_2)))
-  			.pause(5 )
-    }
-
-    // Logout
-    .group("Logout") {
+        exec(http("Click_On_Proceed_To_Course_Content")
+          .get("/course/view.php?id=${CourseID}")
+          .headers(headers_0)
+          .check(regex("Topic outline").exists)
+          .resources(http("request_79")
+            .get("/lib/javascript.php/1574938282/course/completion.js")
+            .headers(headers_2)))
+          .pause(5)
+      }
+  }
+  }
+  object Logout{
+    var logout = group("Logout") {
 
       exec(http("Logout")
         .get("/login/logout.php?sesskey=${sesskey}")
         .headers(headers_0))
     }
+  }
+  val createContent = scenario("CreateContent").exec(Login.login,CreateCourse.createCourse,Logout.logout)
+  val deleteContent = scenario("DeleteContent").exec(Login.login,DeleteCourse.deleteCourse,Logout.logout)
 
-
-  setUp(scn.inject(rampUsers(10) during(30))).protocols(httpProtocol)
+  setUp(
+    createContent.inject(rampUsers(1) during(1)).disablePauses,
+    deleteContent.inject(rampUsers(1) during(1)).disablePauses
+  ).protocols(httpProtocol)
 
 }

@@ -6,80 +6,130 @@ import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
-class DeleteCourse extends Simulation {
+object DeleteCourse {
 
-	val httpProtocol = http
-		.baseUrl("http://52.66.244.207")
-		.inferHtmlResources()
-		.acceptHeader("application/json, text/javascript, */*; q=0.01")
-		.acceptEncodingHeader("gzip, deflate")
-		.acceptLanguageHeader("en-US,en;q=0.9")
-		.userAgentHeader("Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
+  val Custromheader_0 = Map(
+    "Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
+    "Proxy-Connection" -> "keep-alive",
+    "Upgrade-Insecure-Requests" -> "1")
 
-	val headers_0 = Map(
-		"Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
-		"Proxy-Connection" -> "keep-alive",
-		"Upgrade-Insecure-Requests" -> "1")
+  val headers_1 = Map(
+    "Accept" -> "image/webp,image/apng,image/*,*/*;q=0.8",
+    "Proxy-Connection" -> "keep-alive")
 
-	val headers_1 = Map(
-		"Accept" -> "image/webp,image/apng,image/*,*/*;q=0.8",
-		"Proxy-Connection" -> "keep-alive")
+  val Custromheader_2 = Map(
+    "Accept" -> "*/*",
+    "Proxy-Connection" -> "keep-alive")
 
-	val headers_2 = Map(
-		"Accept" -> "*/*",
-		"Proxy-Connection" -> "keep-alive")
+  val headers_3 = Map(
+    "Accept" -> "*/*",
+    "Origin" -> "http://52.66.244.207",
+    "Proxy-Connection" -> "keep-alive")
 
-	val headers_3 = Map(
-		"Accept" -> "*/*",
-		"Origin" -> "http://52.66.244.207",
-		"Proxy-Connection" -> "keep-alive")
+  val headers_7 = Map(
+    "Content-Type" -> "application/json",
+    "Origin" -> "http://52.66.244.207",
+    "Proxy-Connection" -> "keep-alive",
+    "X-Requested-With" -> "XMLHttpRequest")
 
-	val headers_7 = Map(
-		"Content-Type" -> "application/json",
-		"Origin" -> "http://52.66.244.207",
-		"Proxy-Connection" -> "keep-alive",
-		"X-Requested-With" -> "XMLHttpRequest")
+  val Custromheader_10 = Map(
+    "Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
+    "Origin" -> "http://52.66.244.207",
+    "Proxy-Connection" -> "keep-alive",
+    "Upgrade-Insecure-Requests" -> "1")
 
-	val headers_10 = Map(
-		"Accept" -> "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
-		"Origin" -> "http://52.66.244.207",
-		"Proxy-Connection" -> "keep-alive",
-		"Upgrade-Insecure-Requests" -> "1")
+  val headers_11 = Map(
+    "Content-Type" -> "application/json",
+    "Proxy-Connection" -> "keep-alive",
+    "X-Requested-With" -> "XMLHttpRequest")
 
-	val headers_11 = Map(
-		"Content-Type" -> "application/json",
-		"Proxy-Connection" -> "keep-alive",
-		"X-Requested-With" -> "XMLHttpRequest")
+  val Custromheader_31 = Map(
+    "Accept" -> "text/css,*/*;q=0.1",
+    "Proxy-Connection" -> "keep-alive")
 
-	val headers_31 = Map(
-		"Accept" -> "text/css,*/*;q=0.1",
-		"Proxy-Connection" -> "keep-alive")
+  val deleteCourse = repeat(1){
+    group("02_Click on manage Cources") {
+    exec(http("Manage Cources")
+      .get("/course/management.php")
+      .headers(Custromheader_0)
+      .check(regex("\"sesskey\":\"(.+?)\"").saveAs("sesskey"))
+      .check(regex("delete\\.php\\?id=(.+?)\"").findRandom.saveAs("CourseNumber"))
+      .check(regex("Course and category management").exists)
+      .resources(http("request_31")
+        .get("/theme/yui_combo.php?3.17.2/cssbutton/cssbutton-min.css")
+        .headers(Custromheader_31),
+        http("request_32")
+          .get("/theme/yui_combo.php?m/1574938282/core/widget/widget-focusafterclose-min.js&3.17.2/plugin/plugin-min.js&m/1574938282/core/lockscroll/lockscroll-min.js&m/1574938282/core/notification/notification-dialogue-min.js&m/1574938282/core/notification/notification-exception-min.js&3.17.2/dd-constrain/dd-constrain-min.js&3.17.2/dd-proxy/dd-proxy-min.js&3.17.2/event-resize/event-resize-min.js&3.17.2/dd-ddm/dd-ddm-min.js&3.17.2/dd-ddm-drop/dd-ddm-drop-min.js&3.17.2/dd-drop/dd-drop-min.js&3.17.2/dd-drop-plugin/dd-drop-plugin-min.js&3.17.2/dd-delegate/dd-delegate-min.js&m/1574938282/course/management/management-min.js")
+          .headers(Custromheader_2),
+        http("request_33")
+          .get("/theme/yui_combo.php?3.17.2/event-mousewheel/event-mousewheel-min.js&3.17.2/event-hover/event-hover-min.js&3.17.2/event-touch/event-touch-min.js&3.17.2/event-move/event-move-min.js&3.17.2/event-flick/event-flick-min.js&3.17.2/event-valuechange/event-valuechange-min.js&3.17.2/event-tap/event-tap-min.js")
+          .headers(Custromheader_2)))
+  }
+    .pause(5)
 
 
+    // Delete a course
+    .group("02_Click on delete Button") {
+
+      exec(http("request_35")
+        .get("/course/delete.php?id=${CourseNumber}")
+        .headers(Custromheader_0)
+        .check(regex("Are you absolutely sure you want to completely delete this course and all the data it contains?").exists)
+        .check(regex("\" name=\"delete\" value=\"(.+?)\"").saveAs("DeleteID"))
+      )
+    }
+    .pause(5)
+
+
+    // Confirm delete
+    .group("02_Confirm Delete") {
+      exec(http("Confirm Delete")
+        .post("/course/delete.php")
+        .headers(Custromheader_10)
+        .formParam("id", "${CourseNumber}")
+        .formParam("delete", "${DeleteID}")
+        .formParam("sesskey", "${sesskey}")
+        .check(regex("has been completely deleted").exists)
+      )
+    }
+    .pause(5)
+    // Click Continue
+    .group("02_Click Continue") {
+      exec(http("request_39")
+        .get("/course/management.php?categoryid=1")
+        .headers(Custromheader_0)
+        .check(regex("Course and category management").exists)
+      )
+    }
+    .pause(5)
+}
+}
+
+/*
 
 	val scn = scenario("DeleteCourse")
 		// Home Page
 		.exec(http("request_0")
 			.get("/")
-			.headers(headers_0)
+			.headers(Custromheader_0)
 			.resources(http("request_1")
 			.get("/theme/image.php/boost/core/1574938282/i/course")
 			.headers(headers_1),
             http("request_2")
 			.get("/theme/yui_combo.php?m/1574938282/core/event/event-min.js&m/1574938282/filter_mathjaxloader/loader/loader-min.js")
-			.headers(headers_2),
+			.headers(Custromheader_2),
             http("request_3")
 			.get("/theme/font.php/boost/core/1574938282/fontawesome-webfont.woff2?v=4.7.0")
 			.headers(headers_3),
             http("request_4")
 			.get("/lib/requirejs.php/1574938282/core/first.js")
-			.headers(headers_2),
+			.headers(Custromheader_2),
             http("request_5")
 			.get("/lib/javascript.php/1574938282/lib/jquery/jquery-3.4.1.min.js")
-			.headers(headers_2),
+			.headers(Custromheader_2),
             http("request_6")
 			.get("/theme/yui_combo.php?3.17.2/event-mousewheel/event-mousewheel-min.js&3.17.2/event-resize/event-resize-min.js&3.17.2/event-hover/event-hover-min.js&3.17.2/event-touch/event-touch-min.js&3.17.2/event-move/event-move-min.js&3.17.2/event-flick/event-flick-min.js&3.17.2/event-valuechange/event-valuechange-min.js&3.17.2/event-tap/event-tap-min.js")
-			.headers(headers_2),
+			.headers(Custromheader_2),
             http("request_7")
 			.post("/lib/ajax/service.php?sesskey=ilA28k9L9y&info=core_fetch_notifications")
 			.headers(headers_7)
@@ -88,7 +138,7 @@ class DeleteCourse extends Simulation {
 		// Login Page
 		.exec(http("request_8")
 			.get("/login/index.php")
-			.headers(headers_0)
+			.headers(Custromheader_0)
 			.resources(http("request_9")
 			.post("/lib/ajax/service.php?sesskey=ilA28k9L9y&info=core_fetch_notifications")
 			.headers(headers_7)
@@ -159,10 +209,10 @@ class DeleteCourse extends Simulation {
 		// Site admin
 		.exec(http("request_27")
 			.get("/admin/search.php")
-			.headers(headers_0)
+			.headers(Custromheader_0)
 			.resources(http("request_28")
 			.get("/theme/yui_combo.php?m/1574938282/core/formchangechecker/formchangechecker-min.js")
-			.headers(headers_2),
+			.headers(Custromheader_2),
             http("request_29")
 			.post("/lib/ajax/service.php?sesskey=IsvEXBDuMh&info=core_fetch_notifications")
 			.headers(headers_7)
@@ -172,16 +222,16 @@ class DeleteCourse extends Simulation {
 		// Click Manage cources
 		.exec(http("request_30")
 			.get("/course/management.php")
-			.headers(headers_0)
+			.headers(Custromheader_0)
 			.resources(http("request_31")
 			.get("/theme/yui_combo.php?3.17.2/cssbutton/cssbutton-min.css")
-			.headers(headers_31),
+			.headers(Custromheader_31),
             http("request_32")
 			.get("/theme/yui_combo.php?m/1574938282/core/widget/widget-focusafterclose-min.js&3.17.2/plugin/plugin-min.js&m/1574938282/core/lockscroll/lockscroll-min.js&m/1574938282/core/notification/notification-dialogue-min.js&m/1574938282/core/notification/notification-exception-min.js&3.17.2/dd-constrain/dd-constrain-min.js&3.17.2/dd-proxy/dd-proxy-min.js&3.17.2/event-resize/event-resize-min.js&3.17.2/dd-ddm/dd-ddm-min.js&3.17.2/dd-ddm-drop/dd-ddm-drop-min.js&3.17.2/dd-drop/dd-drop-min.js&3.17.2/dd-drop-plugin/dd-drop-plugin-min.js&3.17.2/dd-delegate/dd-delegate-min.js&m/1574938282/course/management/management-min.js")
-			.headers(headers_2),
+			.headers(Custromheader_2),
             http("request_33")
 			.get("/theme/yui_combo.php?3.17.2/event-mousewheel/event-mousewheel-min.js&3.17.2/event-hover/event-hover-min.js&3.17.2/event-touch/event-touch-min.js&3.17.2/event-move/event-move-min.js&3.17.2/event-flick/event-flick-min.js&3.17.2/event-valuechange/event-valuechange-min.js&3.17.2/event-tap/event-tap-min.js")
-			.headers(headers_2),
+			.headers(Custromheader_2),
             http("request_34")
 			.post("/lib/ajax/service.php?sesskey=IsvEXBDuMh&info=core_fetch_notifications")
 			.headers(headers_7)
@@ -190,7 +240,7 @@ class DeleteCourse extends Simulation {
 		// Delete a course
 		.exec(http("request_35")
 			.get("/course/delete.php?id=160")
-			.headers(headers_0)
+			.headers(Custromheader_0)
 			.resources(http("request_36")
 			.post("/lib/ajax/service.php?sesskey=IsvEXBDuMh&info=core_fetch_notifications")
 			.headers(headers_7)
@@ -211,7 +261,7 @@ class DeleteCourse extends Simulation {
 		// Click Continue
 		.exec(http("request_39")
 			.get("/course/management.php?categoryid=1")
-			.headers(headers_0)
+			.headers(Custromheader_0)
 			.resources(http("request_40")
 			.post("/lib/ajax/service.php?sesskey=IsvEXBDuMh&info=core_fetch_notifications")
 			.headers(headers_7)
@@ -220,11 +270,11 @@ class DeleteCourse extends Simulation {
 		// Logout
 		.exec(http("request_41")
 			.get("/login/logout.php?sesskey=IsvEXBDuMh")
-			.headers(headers_0)
+			.headers(Custromheader_0)
 			.resources(http("request_42")
 			.post("/lib/ajax/service.php?sesskey=41vEJotB8U&info=core_fetch_notifications")
 			.headers(headers_7)
 			.body(RawFileBody("com/maveric/gatling/deletecourse/0042_request.json"))))
 
-	setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
-}
+	setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)*/
+
